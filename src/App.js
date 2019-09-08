@@ -1,26 +1,46 @@
-import React,{Component} from 'react';
-import {CardList} from './components/card-list/card-list.component'  
-import './App.css';
+import React, { Component } from "react";
+import { CardList } from "./components/card-list/card-list.component";
+import { SearchBox } from "./components/search-box/search-box.component";
+import "./App.css";
 
-class App extends Component{
-  constructor(){
+class App extends Component {
+  constructor() {
     super();
-    this.state={
-      monsters:[]
+    this.state = {
+      monsters: [],
+      searchField: ""
     };
+    // If you dont use arrow function then use uncomment the line below
+    // this.handleChange = this.handleChange.bind(this);
   }
-  componentDidMount(){
-    fetch('https://jsonplaceholder.typicode.com/users')
-    .then(response =>response.json())
-    .then(users => this.setState({monsters:users}));
+  componentDidMount() {
+    fetch("https://jsonplaceholder.typicode.com/users")
+      .then(response => response.json())
+      .then(users => this.setState({ monsters: users }));
   }
-  render(){
-    return(
+  handleChange = e => {
+    this.setState({ searchField: e.target.value });
+  };
+  render() {
+    const { monsters, searchField } = this.state;
+    // const monsters = this.state.monsters;
+    // const searchField = this.state.searchField;
+
+    const filterMonsters = monsters.filter(monster =>
+      monster.name.toLowerCase().includes(searchField.toLowerCase())
+    );
+    return (
       <div className="App">
-        <input type="search" placeholder='Search Monsters' onChange={e=> console.log(e.target.value)} />
-        <CardList monsters={this.state.monsters}/>  
+        <h1>Monsters Rolodex</h1>
+        {/* search field is here */}
+        <SearchBox
+          placeholder="Search Monsters"
+          handleChange={this.handleChange}
+        />
+        {/* <CardList monsters={this.state.monsters}/>   */}
+        <CardList monsters={filterMonsters} />
       </div>
-    )
+    );
   }
 }
 
